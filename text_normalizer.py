@@ -31,13 +31,25 @@ class TextProcessor:
 
         self.re_thousands = '|'.join([t for t in TextProcessor.thousands])
         self.re_currencies = '|'.join([c for c in self.currencies]).replace('$', '\\$')
-        self.re_moneys = r'(({}) ?([\d\.\,]+) (({})?(an)?))'.format(self.re_currencies, self.re_thousands)
+        self.re_moneys = r'(({}) ?([\d\.\,]+)( ({})?(an)?)?)'.format(self.re_currencies, self.re_thousands)
         self.re_measurements = '|'.join([t for t in self.measurements])
-        self.re_measurements = r'(([\d\.\,]+) ?({}) )'.format(self.re_measurements)
+        self.re_measurements = r'(([\d\.\,]+) ?\b({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
-        self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + '({}))'.format(self.re_timezones)
-        print(self.re_measurements)
-        print(self.re_timezones)
+        self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + '\b({})\b)'.format(self.re_timezones)
+
+    def is_integer(self, number):
+        try:
+            int(number)
+            return True
+        except ValueError:
+            return False
+
+    def is_float(self, number):
+        try:
+            float(number)
+            return True
+        except ValueError:
+            return False
 
     def normalize(self, text):
         found_errors = False
@@ -48,9 +60,12 @@ class TextProcessor:
             try:
                 if number == "":
                     continue
-                if re.search(r'\.', number):
+                if self.is_integer(number):
+                    number = int(number)
+                elif self.is_float(number):
                     number = float(number)
                 else:
+                    number = re.sub(r'[.,]', "", number)
                     number = int(number)
                 number = num2words(number, to='cardinal', lang='id')
                 text = text.replace(money[0].strip(" ,."), f'{number} {money[3]} {self.currencies[money[1]]}')
@@ -130,26 +145,21 @@ class TextProcessor:
                 print(f'Problem with number: <{text}>: {number}')
 
         # Any number
-        numerics = re.findall(r'(\d+)', text)
-        for numeric in numerics:
-            number = numeric
+        number_len = 0
+        for i in re.finditer(r'\d+', text):
+            start = i.start()+number_len
+            end = i.end()+number_len
+            number = text[start:end]
             try:
-                number = num2words(int(number), to='cardinal', lang='id')
-                text = text.replace(numeric, f'{number}')
+                number = num2words(int(number), to='cardinal', lang="id")
+                text = text[:start] + number + text[end:]
+                number_len += len(number) - (end - start)
             except Exception as error:
                 found_errors = True
                 print(error)
                 print(f'Problem with number: <{text}>: {number}')
 
-        text = text.replace("  ", " ")
+        text = re.sub(r"\s+", " ", text)
         if found_errors:
-            print(text)
+            print(f'>>> {text}')
         return text
-
-tp = TextProcessor()
-texts = [
-    "\"Untuk kesiapsiagaan, 16.180.234 untuk literasi jam 13.40 WIT, sedangkan nomor 1,2,3,4 dan 5 untuk edukasi jam 12:05 WIT, dari sisi itu,\" kata Hary kepada CNNIndonesia.com, Jumat (2/3)",
-    "Lenovo 13,,4 Chromebook 100. 200e b 50 78.5 senin (12/2/2011) dibanderol. (20/10) 205 kg 5,6 cm seharga US$219,50 €20,50 ¥ 30,5 (Rp 6,5 juta) £ 100,50. 320 sementara model 33 dihargai sekitar $279 (Rp3,8 miliaran) sekitar pukul 06.00 WIB"
-]
-for text in texts:
-    print(tp.normalize(text))
