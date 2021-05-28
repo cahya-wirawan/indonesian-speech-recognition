@@ -36,6 +36,7 @@ class TextProcessor:
         self.re_measurements = r'(([\d\.\,]+) ?\b({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
         self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + r'\b({})\b)'.format(self.re_timezones)
+        self.re_http = r'(https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 
     def is_integer(self, number):
         try:
@@ -53,6 +54,11 @@ class TextProcessor:
 
     def normalize(self, text):
         found_errors = False
+        # Remove URL
+        urls = re.findall(self.re_http, text)
+        for url in urls:
+            text = text.replace(url[0], "")
+
         # Currency
         moneys = re.findall(self.re_moneys, text)
         for money in moneys:
@@ -97,7 +103,10 @@ class TextProcessor:
         for date in dates:
             try:
                 day = num2words(int(date[1]), to='cardinal', lang='id')
-                month = self.months[int(date[2]) - 1]
+                month = int(date[2]) - 1
+                if month >= 12:
+                    month = 0
+                month = self.months[month]
                 if date[4] != "":
                     year = num2words(int(date[4]), to='cardinal', lang='id')
                     date_string = f'{day} {month} {year}'
