@@ -31,7 +31,7 @@ class TextProcessor:
 
         self.re_thousands = '|'.join([t for t in TextProcessor.thousands])
         self.re_currencies = '|'.join([c for c in self.currencies]).replace('$', '\\$')
-        self.re_moneys = r'(({}) ?([\d\.\,]+)( ({})?(an)?)?)'.format(self.re_currencies, self.re_thousands)
+        self.re_moneys = r'(\b({})\b ?([\d\.\,]+)( ({})?(an)?)?)'.format(self.re_currencies, self.re_thousands)
         self.re_measurements = '|'.join([t for t in self.measurements])
         self.re_measurements = r'(([\d\.\,]+) ?\b({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
@@ -148,10 +148,10 @@ class TextProcessor:
                     continue
                 if self.is_integer(number) or self.is_float(number):
                     try:
-                        if self.is_float(number):
-                            number = float(number)
-                        else:
+                        if self.is_integer(number):
                             number = int(number)
+                        else:
+                            number = float(number)
                         number = num2words(number, to='cardinal', lang="id")
                         text = text[:start] + number + text[end:]
                         number_len += len(number) - (end - start)
