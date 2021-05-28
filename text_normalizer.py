@@ -33,7 +33,7 @@ class TextProcessor:
         self.re_currencies = '|'.join([c for c in self.currencies]).replace('$', '\\$')
         self.re_moneys = r'(\b({})\b ?([\d\.\,]+)( ({})?(an)?)?)'.format(self.re_currencies, self.re_thousands)
         self.re_measurements = '|'.join([t for t in self.measurements])
-        self.re_measurements = r'(([\d\.\,]+) ?\b({})\b)'.format(self.re_measurements)
+        self.re_measurements = r'(\b([\d\.\,]+) ?({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
         self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + r'\b({})\b)'.format(self.re_timezones)
         self.re_http = r'(https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
