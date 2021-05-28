@@ -35,7 +35,7 @@ class TextProcessor:
         self.re_measurements = '|'.join([t for t in self.measurements])
         self.re_measurements = r'(([\d\.\,]+) ?\b({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
-        self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + '\b({})\b)'.format(self.re_timezones)
+        self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + r'\b({})\b)'.format(self.re_timezones)
 
     def is_integer(self, number):
         try:
@@ -126,38 +126,30 @@ class TextProcessor:
                 print(error)
                 print(f'Problem with timezones: <{text}>: {timezone}')
 
-        # Number
-        numerics = re.findall(r'([\d.,]+)', text)
-        for numeric in numerics:
-            number = re.sub(',', '.', re.sub(r'\.', '', numeric.strip(" ,.")))
-            if number == "":
-                continue
-            try:
-                if re.search(r'\.', number):
-                    number = float(number)
-                else:
-                    number = int(number)
-                number = num2words(number, to='cardinal', lang='id')
-                text = text.replace(numeric.strip(" ,."), f' {number} ')
-            except Exception as error:
-                found_errors = True
-                print(error)
-                print(f'Problem with number: <{text}>: {number}')
-
         # Any number
-        number_len = 0
-        for i in re.finditer(r'\d+', text):
-            start = i.start()+number_len
-            end = i.end()+number_len
-            number = text[start:end]
-            try:
-                number = num2words(int(number), to='cardinal', lang="id")
-                text = text[:start] + number + text[end:]
-                number_len += len(number) - (end - start)
-            except Exception as error:
-                found_errors = True
-                print(error)
-                print(f'Problem with number: <{text}>: {number}')
+        re_numbers = [r'([\d.,]+)', r'\d+']
+        for re_number in re_numbers:
+            number_len = 0
+            for i in re.finditer(re_number, text):
+                start = i.start()+number_len
+                end = i.end()+number_len
+                number = text[start:end]
+                number = re.sub(',', '.', re.sub(r'\.', '', number.strip(" ,.")))
+                if number == "":
+                    continue
+                if self.is_integer(number) or self.is_float(number):
+                    try:
+                        if self.is_float(number):
+                            number = float(number)
+                        else:
+                            number = int(number)
+                        number = num2words(number, to='cardinal', lang="id")
+                        text = text[:start] + number + text[end:]
+                        number_len += len(number) - (end - start)
+                    except Exception as error:
+                        found_errors = True
+                        print(error)
+                        print(f'Problem with number: <{text}>: {number}')
 
         text = re.sub(r"\s+", " ", text)
         if found_errors:
