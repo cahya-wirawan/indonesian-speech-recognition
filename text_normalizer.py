@@ -31,7 +31,7 @@ class TextProcessor:
 
         self.re_thousands = '|'.join([t for t in TextProcessor.thousands])
         self.re_currencies = '|'.join([c for c in self.currencies]).replace('$', '\\$')
-        self.re_moneys = r'(\b({})\b ?([\d\.\,]+)( ({})?(an)?)?)'.format(self.re_currencies, self.re_thousands)
+        self.re_moneys = r'(\b({}) ?([\d\.\,]+)( ({})?(an)?)?\b)'.format(self.re_currencies, self.re_thousands)
         self.re_measurements = '|'.join([t for t in self.measurements])
         self.re_measurements = r'(\b([\d\.\,]+) ?({})\b)'.format(self.re_measurements)
         self.re_timezones = '|'.join([c for c in self.timezones])
