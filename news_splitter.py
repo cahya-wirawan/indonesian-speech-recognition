@@ -2,7 +2,7 @@ from pathlib import Path
 from langdetect import detect
 from text_normalizer import TextProcessor
 
-news_path = Path("/mnt/mldata/data/newspapers/newspapers.txt")
+news_path = Path("/mnt/mldata/data/newspapers/newspapers-clean.txt")
 voices_path = Path("/mnt/mldata/data/ASR/news/newspapers.tsv")
 min_text_length = 15
 
