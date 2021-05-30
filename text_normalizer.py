@@ -30,7 +30,8 @@ class TextProcessor:
                 self.timezones[line[0]] = line[1]
 
         self.re_thousands = '|'.join([t for t in TextProcessor.thousands])
-        self.re_currencies = '|'.join([c for c in self.currencies]).replace('$', '\\$')
+        self.re_currencies = '|'.join([c for c in self.currencies]).replace("$", "\$") + '|\€'
+        #self.re_currencies = '|'.join([c for c in self.currencies])
         self.re_moneys = r'(\b({}) ?([\d\.\,]+)( ({})?(an)?)?\b)'.format(self.re_currencies, self.re_thousands)
         self.re_measurements = '|'.join([t for t in self.measurements])
         self.re_measurements = r'(\b([\d\.\,]+) ?({})\b)'.format(self.re_measurements)
