@@ -1,14 +1,10 @@
 US$	dollar amerika serikat
-$	dollar
-£	pounds
-₩	won
 nzd	dollar new zealand
 rs	rupee
 chf	franc swiss
 dkk	kroner denmark
 fim	markka finland
 aed	dirham arab
-¥	yen
 czk	koruna ceko
 mro	ouguiya mauritania
 pkr	rupee pakistan
@@ -20,7 +16,6 @@ nok	kroner norwegia
 tzs	shilling tanzania
 sek	kronor swedish
 cyp	pounds cypriot
-r	real
 sar	riyal saudi
 cve	escudo cape verde
 rsd	dinar serbia
@@ -31,4 +26,10 @@ cad	dollar canada
 ssp	pounds sudan selatan
 scr	rupee seychell
 mvr	rufiyaa maldivia
-Rp	rupiah
+Rp	rupiahs
+r	real
+$	dollar
+€	euro
+£	pounds
+₩	won
+¥	yen
