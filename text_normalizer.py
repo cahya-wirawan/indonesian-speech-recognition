@@ -39,14 +39,16 @@ class TextProcessor:
         self.re_timezones = r'((\d{1,2})[\.:](\d{1,2}) ' + r'\b({})\b)'.format(self.re_timezones)
         self.re_http = r'(https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b[-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 
-    def is_integer(self, number):
+    @staticmethod
+    def is_integer(number):
         try:
             int(number)
             return True
         except ValueError:
             return False
 
-    def is_float(self, number):
+    @staticmethod
+    def is_float(number):
         try:
             float(number)
             return True
