@@ -1,6 +1,7 @@
 import re
 from num2words import num2words
 
+
 class TextProcessor:
     thousands = ["ratus", "ribu", "juta", "miliar", "milyar", "triliun"]
     months = ["Januari", "Februari", "Maret", "April",
@@ -143,8 +144,8 @@ class TextProcessor:
         for re_number in re_numbers:
             number_len = 0
             for i in re.finditer(re_number, text):
-                start = i.start()+number_len
-                end = i.end()+number_len
+                start = i.start() + number_len
+                end = i.end() + number_len
                 number = text[start:end]
                 number = re.sub(',', '.', re.sub(r'\.', '', number.strip(" ,.")))
                 if number == "":
